@@ -1,3 +1,4 @@
+// LoginRequest.java
 package com.example.backend_spaces.dto;
 
 public class LoginRequest {
@@ -12,20 +13,10 @@ public class LoginRequest {
         this.password = password;
     }
 
-    // Getter & Setter
-    public String getEmail() {
-        return email;
-    }
+    // Getters & Setters
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;  // Thêm phương thức getPassword()
-    }
-
-    public void setPassword(String password) {
-        this.password = password;  // Thêm phương thức setPassword()
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 }

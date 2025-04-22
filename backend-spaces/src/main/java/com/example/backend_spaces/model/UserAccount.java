@@ -24,13 +24,35 @@ public class UserAccount {
     }
 
     // Getter & Setter
+    public String getEmail() {
+        return email;  // Phương thức getter cho email
+    }
+
+    public void setEmail(String email) {
+        this.email = email;  // Phương thức setter cho email
+    }
+
     public String getPassword() {
-        return password;  // Trả về mật khẩu
+        return password;  // Phương thức getter cho password
     }
 
     public void setPassword(String password) {
-        this.password = password;  // Set mật khẩu
+        this.password = password;  // Phương thức setter cho password
     }
 
-    // Các getter và setter khác
+    public String getRole() {
+        return role;  // Phương thức getter cho role
+    }
+
+    public void setRole(String role) {
+        this.role = role;  // Phương thức setter cho role
+    }
+
+    public String getGymId() {
+        return gymId;  // Phương thức getter cho gymId
+    }
+
+    public void setGymId(String gymId) {
+        this.gymId = gymId;  // Phương thức setter cho gymId
+    }
 }
