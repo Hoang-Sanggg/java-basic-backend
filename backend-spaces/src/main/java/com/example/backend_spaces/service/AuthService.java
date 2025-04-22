@@ -1,7 +1,5 @@
 package com.example.backend_spaces.service;
 
-import java.util.Optional;
-
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,8 +15,8 @@ public class AuthService {
     private UserAccountRepository userRepo;
 
     // Đăng ký tài khoản mới
-    public String register(String email, String rawPassword, String role, String gymId) {
-        // Kiểm tra nếu email đã tồn tại
+    public void register(String email, String rawPassword, String role, String gymId) {
+        // Kiểm tra email có tồn tại trong hệ thống không
         if (userRepo.findByEmail(email).isPresent()) {
             throw new RuntimeException("Email đã tồn tại");
         }
@@ -28,24 +26,25 @@ public class AuthService {
 
         // Tạo tài khoản mới
         UserAccount user = new UserAccount(email, hashedPassword, role, gymId);
-
-        // Lưu vào cơ sở dữ liệu
         userRepo.save(user);
-
-        return "Đăng ký thành công";
     }
 
-    // Đăng nhập (trả về token nếu thành công)
-    public Optional<String> login(String email, String rawPassword) {
-        Optional<UserAccount> userOpt = userRepo.findByEmail(email);
-        if (userOpt.isPresent()) {
-            UserAccount user = userOpt.get();
-            if (BCrypt.checkpw(rawPassword, user.getPassword())) {
-                // Tạo JWT token khi đăng nhập thành công
-                String token = JwtTokenUtil.generateToken(user.getGymId());
-                return Optional.of(token);
-            }
+    // Đăng nhập và trả về token nếu thông tin hợp lệ
+    public String login(String email, String rawPassword) {
+        UserAccount user = userRepo.findByEmail(email).orElseThrow(() -> new RuntimeException("Email không tồn tại"));
+
+        // Kiểm tra mật khẩu
+        if (BCrypt.checkpw(rawPassword, user.getPassword())) {
+            // Lấy gymId từ UserAccount
+            String gymId = user.getGymId();
+
+            // Tạo JWT token với email và gymId
+            String token = JwtTokenUtil.generateToken(user.getEmail(), gymId);
+
+            // Trả về token với định dạng Bearer token
+            return token;
         }
-        return Optional.empty();  // Nếu không tìm thấy user hoặc mật khẩu sai
+
+        throw new RuntimeException("Mật khẩu sai");
     }
 }

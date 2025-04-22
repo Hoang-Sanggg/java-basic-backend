@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.backend_spaces.model.GymPackage;
-import com.example.backend_spaces.model.TrainingContract;  // Import java.sql.Date
+import com.example.backend_spaces.model.TrainingContract;
 import com.example.backend_spaces.repository.GymPackageRepository;
 import com.example.backend_spaces.repository.TrainingContractRepository;
 
@@ -21,27 +21,29 @@ public class GymService {
     @Autowired
     private TrainingContractRepository trainingContractRepository;
 
-    // Create - Tạo mới gói tập
+    // ----------------------------- CRUD cho GymPackage -----------------------------
+
+    // 1. Tạo gói tập
     public GymPackage createGymPackage(String name, double price, int duration, String description, String gymId) {
         GymPackage gymPackage = new GymPackage(name, price, duration, description, gymId);
         return gymPackageRepository.save(gymPackage);
     }
 
-    // Read - Lấy tất cả gói tập theo gymId
+    // 2. Lấy tất cả gói tập theo gymId
     public List<GymPackage> getGymPackagesByGymId(String gymId) {
-        return gymPackageRepository.findByGymId(gymId);  // Lấy tất cả gói tập theo gymId
+        return gymPackageRepository.findByGymId(gymId);  // Tìm tất cả gói tập theo gymId
     }
 
-    // Read - Lấy gói tập theo ID
+    // 3. Lấy gói tập theo ID
     public Optional<GymPackage> getGymPackageById(String id) {
         return gymPackageRepository.findById(id);
     }
 
-    // Update - Cập nhật gói tập
+    // 4. Cập nhật gói tập
     public GymPackage updateGymPackage(String id, String name, double price, int duration, String description, String gymId) {
-        Optional<GymPackage> gymPackageOptional = gymPackageRepository.findById(id);
-        if (gymPackageOptional.isPresent()) {
-            GymPackage gymPackage = gymPackageOptional.get();
+        Optional<GymPackage> existingGymPackage = gymPackageRepository.findById(id);
+        if (existingGymPackage.isPresent()) {
+            GymPackage gymPackage = existingGymPackage.get();
             gymPackage.setName(name);
             gymPackage.setPrice(price);
             gymPackage.setDuration(duration);
@@ -52,33 +54,52 @@ public class GymService {
         return null;  // Trả về null nếu không tìm thấy gói tập
     }
 
-    // Delete - Xóa gói tập
+    // 5. Xóa gói tập
     public boolean deleteGymPackage(String id) {
         if (gymPackageRepository.existsById(id)) {
             gymPackageRepository.deleteById(id);
             return true;
         }
-        return false;
+        return false;  // Trả về false nếu không tìm thấy gói tập để xóa
     }
 
-    // Create - Tạo hợp đồng tập luyện
-    public TrainingContract createTrainingContract(String memberId, String gymPackageId, Date startDate, Date endDate) {
-        TrainingContract contract = new TrainingContract(memberId, gymPackageId, startDate, endDate, true);
+    // ------------------------- CRUD cho TrainingContract ---------------------------
+
+    // 6. Tạo hợp đồng tập luyện
+    public TrainingContract createTrainingContract(String memberId, String gymPackageId, String gymId, Date startDate, Date endDate) {
+        TrainingContract contract = new TrainingContract(memberId, gymPackageId, gymId, startDate, endDate, true);
         return trainingContractRepository.save(contract);
     }
 
-    // Read - Lấy tất cả hợp đồng tập luyện theo gymPackageId
-    public List<TrainingContract> getTrainingContractsByGymPackageId(String gymPackageId) {
-        return trainingContractRepository.findByGymPackageId(gymPackageId);
+    // 8. Lấy hợp đồng tập luyện theo ID
+    public Optional<TrainingContract> getTrainingContractById(String id) {
+        return trainingContractRepository.findById(id);
     }
 
-    // Update - Cập nhật hợp đồng tập luyện
-    public TrainingContract updateTrainingContract(String id, String memberId, String gymPackageId, Date startDate, Date endDate, boolean isActive) {
-        Optional<TrainingContract> contractOptional = trainingContractRepository.findById(id);
-        if (contractOptional.isPresent()) {
-            TrainingContract contract = contractOptional.get();
+    public List<TrainingContract> getTrainingContractsByGymId(String gymId) {
+        // Kiểm tra xem gymId có tồn tại trong cơ sở dữ liệu hay không
+        if (gymId == null || gymId.trim().isEmpty()) {
+            throw new IllegalArgumentException("GymId không hợp lệ");
+        }
+
+        List<TrainingContract> contracts = trainingContractRepository.findByGymId(gymId);
+
+        // Kiểm tra nếu danh sách hợp đồng là null hoặc rỗng
+        if (contracts == null || contracts.isEmpty()) {
+            throw new RuntimeException("Không tìm thấy hợp đồng cho gymId: " + gymId);
+        }
+
+        return contracts;
+    }
+
+    // 10. Cập nhật hợp đồng tập luyện
+    public TrainingContract updateTrainingContract(String id, String memberId, String gymPackageId, String gymId, Date startDate, Date endDate, boolean isActive) {
+        Optional<TrainingContract> existingContract = trainingContractRepository.findById(id);
+        if (existingContract.isPresent()) {
+            TrainingContract contract = existingContract.get();
             contract.setMemberId(memberId);
             contract.setGymPackageId(gymPackageId);
+            contract.setGymId(gymId);
             contract.setStartDate(startDate);
             contract.setEndDate(endDate);
             contract.setActive(isActive);
@@ -87,12 +108,12 @@ public class GymService {
         return null;  // Trả về null nếu không tìm thấy hợp đồng
     }
 
-    // Delete - Xóa hợp đồng tập luyện
+    // 11. Xóa hợp đồng tập luyện
     public boolean deleteTrainingContract(String id) {
         if (trainingContractRepository.existsById(id)) {
             trainingContractRepository.deleteById(id);
             return true;
         }
-        return false;
+        return false;  // Trả về false nếu không tìm thấy hợp đồng để xóa
     }
 }

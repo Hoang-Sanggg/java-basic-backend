@@ -3,7 +3,7 @@ package com.example.backend_spaces.model;
 import java.sql.Date;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;  // Sử dụng java.sql.Date
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "training_contracts")
 public class TrainingContract {
@@ -12,16 +12,18 @@ public class TrainingContract {
     private String id;
     private String memberId;
     private String gymPackageId;
-    private Date startDate;  // Dùng java.sql.Date
-    private Date endDate;    // Dùng java.sql.Date
+    private String gymId;  // Thêm gymId
+    private Date startDate;
+    private Date endDate;
     private boolean isActive;
 
     // Constructors
     public TrainingContract() {}
 
-    public TrainingContract(String memberId, String gymPackageId, Date startDate, Date endDate, boolean isActive) {
+    public TrainingContract(String memberId, String gymPackageId, String gymId, Date startDate, Date endDate, boolean isActive) {
         this.memberId = memberId;
         this.gymPackageId = gymPackageId;
+        this.gymId = gymId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.isActive = isActive;
@@ -50,6 +52,14 @@ public class TrainingContract {
 
     public void setGymPackageId(String gymPackageId) {
         this.gymPackageId = gymPackageId;
+    }
+
+    public String getGymId() {
+        return gymId;
+    }
+
+    public void setGymId(String gymId) {
+        this.gymId = gymId;
     }
 
     public Date getStartDate() {
