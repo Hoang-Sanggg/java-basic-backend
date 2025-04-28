@@ -1,6 +1,7 @@
 package com.example.backend_spaces.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,22 +20,38 @@ public class MemberService {
         return memberRepository.findByGymId(gymId);
     }
 
-    // Tạo mới một hội viên
+    // Tạo hội viên mới
     public Member createMember(Member member) {
         return memberRepository.save(member);
     }
 
-    // Cập nhật hội viên
-    public Member updateMember(String id, Member member) {
-        Member existingMember = memberRepository.findById(id).orElseThrow(() -> new RuntimeException("Member not found"));
-        existingMember.setFullName(member.getFullName());
-        existingMember.setPhone(member.getPhone());
-        existingMember.setEmail(member.getEmail());
-        return memberRepository.save(existingMember);
+    // Tìm hội viên theo ID
+    public Optional<Member> getMemberById(String id) {
+        return memberRepository.findById(id);
     }
 
-    // Xóa hội viên theo ID
-    public void deleteMember(String id) {
-        memberRepository.deleteById(id);
+    // Cập nhật hội viên
+    public Member updateMember(String id, Member memberRequest) {
+        Optional<Member> optionalMember = memberRepository.findById(id);
+        if (optionalMember.isPresent()) {
+            Member member = optionalMember.get();
+            member.setFullName(memberRequest.getFullName());
+            member.setAge(memberRequest.getAge());
+            member.setPhone(memberRequest.getPhone());
+            member.setEmail(memberRequest.getEmail());
+            member.setMembershipType(memberRequest.getMembershipType());
+            member.setGymId(memberRequest.getGymId());
+            return memberRepository.save(member);
+        }
+        return null;
+    }
+
+    // Xóa hội viên
+    public boolean deleteMember(String id) {
+        if (memberRepository.existsById(id)) {
+            memberRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

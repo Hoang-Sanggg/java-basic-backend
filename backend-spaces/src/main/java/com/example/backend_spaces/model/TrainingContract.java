@@ -1,6 +1,6 @@
 package com.example.backend_spaces.model;
 
-import java.sql.Date;
+import java.util.Date;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -12,9 +12,9 @@ public class TrainingContract {
     private String id;
     private String memberId;
     private String gymPackageId;
-    private String gymId;  // Thêm gymId
-    private Date startDate;
-    private Date endDate;
+    private String gymId;
+    private Date startDate;    // <== Đổi về java.util.Date
+    private Date endDate;      // <== Đổi về java.util.Date
     private boolean isActive;
 
     // Constructors
@@ -29,60 +29,25 @@ public class TrainingContract {
         this.isActive = isActive;
     }
 
-    // Getters and Setters
-    public String getId() {
-        return id;
-    }
+    // Getters and Setters (đầy đủ)
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    public String getMemberId() { return memberId; }
+    public void setMemberId(String memberId) { this.memberId = memberId; }
 
-    public String getMemberId() {
-        return memberId;
-    }
+    public String getGymPackageId() { return gymPackageId; }
+    public void setGymPackageId(String gymPackageId) { this.gymPackageId = gymPackageId; }
 
-    public void setMemberId(String memberId) {
-        this.memberId = memberId;
-    }
+    public String getGymId() { return gymId; }
+    public void setGymId(String gymId) { this.gymId = gymId; }
 
-    public String getGymPackageId() {
-        return gymPackageId;
-    }
+    public Date getStartDate() { return startDate; }
+    public void setStartDate(Date startDate) { this.startDate = startDate; }
 
-    public void setGymPackageId(String gymPackageId) {
-        this.gymPackageId = gymPackageId;
-    }
+    public Date getEndDate() { return endDate; }
+    public void setEndDate(Date endDate) { this.endDate = endDate; }
 
-    public String getGymId() {
-        return gymId;
-    }
-
-    public void setGymId(String gymId) {
-        this.gymId = gymId;
-    }
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
-    }
+    public boolean isActive() { return isActive; }
+    public void setActive(boolean active) { isActive = active; }
 }

@@ -3,6 +3,7 @@ package com.example.backend_spaces.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,27 +23,39 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
 
-    // Lấy danh sách hội viên theo phòng gym (gymId)
+    // Lấy danh sách hội viên theo gymId
     @GetMapping("/{gymId}")
-    public List<Member> getMembersByGym(@PathVariable String gymId) {
-        return memberService.getMembersByGym(gymId);
+    public ResponseEntity<List<Member>> getMembersByGym(@PathVariable String gymId) {
+        List<Member> members = memberService.getMembersByGym(gymId);
+        return ResponseEntity.ok(members);
     }
 
-    // Tạo mới một hội viên
+    // Tạo mới hội viên
     @PostMapping
-    public Member createMember(@RequestBody Member member) {
-        return memberService.createMember(member);
+    public ResponseEntity<Member> createMember(@RequestBody Member memberRequest) {
+        Member member = memberService.createMember(memberRequest);
+        return ResponseEntity.ok(member);
     }
 
-    // Cập nhật thông tin hội viên
+    // Lấy hội viên theo ID
+    @GetMapping("/member/{id}")
+    public ResponseEntity<Member> getMemberById(@PathVariable String id) {
+        return memberService.getMemberById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Cập nhật hội viên
     @PutMapping("/{id}")
-    public Member updateMember(@PathVariable String id, @RequestBody Member member) {
-        return memberService.updateMember(id, member);
+    public ResponseEntity<Member> updateMember(@PathVariable String id, @RequestBody Member memberRequest) {
+        Member updated = memberService.updateMember(id, memberRequest);
+        return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 
-    // Xóa hội viên theo id
+    // Xóa hội viên
     @DeleteMapping("/{id}")
-    public void deleteMember(@PathVariable String id) {
-        memberService.deleteMember(id);
+    public ResponseEntity<String> deleteMember(@PathVariable String id) {
+        boolean deleted = memberService.deleteMember(id);
+        return deleted ? ResponseEntity.ok("Hội viên đã được xóa") : ResponseEntity.notFound().build();
     }
 }
